@@ -38,6 +38,18 @@
                 console.error('Error:', error);
             }
         });
+
+        // Send a GET request when the page loads
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch('http://localhost:8080/');
+                const data = await response.json();
+                console.log(data.products); // Log products to console
+                // You can update the UI here with the received products if needed
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
     </script>
 </body>
 </html>
