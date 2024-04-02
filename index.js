@@ -28,11 +28,11 @@ main().catch((error) => console.log(error));
 
 
 async function main() {
-  await mongoose.connect("mongodb+srv://mohitmakhijani7:1234123121@cluster0.e2soqtd.mongodb.net//data");
+  await mongoose.connect("mongodb+srv://mohitmakhijani7:1234123121@cluster0.e2soqtd.mongodb.net/products");
   console.log("database connected");
 }
 
 server.listen(8080, ()=> {
-    console.log('Server running on');
+    console.log('Server running ');
   });
   
