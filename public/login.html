@@ -1,0 +1,64 @@
+<script>
+    document.getElementById('productForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById('name').value;
+        const price = document.getElementById('price').value;
+        
+        try {
+            const response = await fetch('http://localhost:8080/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, price })
+            });
+            
+            const data = await response.json();
+            alert(data.message);
+            // You can update the UI here if needed
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    document.getElementById('signupForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const name = document.getElementById('name').value;
+        const password = document.getElementById('password').value;
+        const phoneNo = document.getElementById('phoneNo').value;
+        const Aadhar = document.getElementById('Aadhar').value;
+        const profilePicture = document.getElementById('profilePicture').value;
+        const address = document.getElementById('address').value;
+        
+        try {
+            const response = await fetch('http://localhost:8080/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, name, password, phoneNo, Aadhar, profilePicture, address })
+            });
+            
+            const data = await response.json();
+            alert(data.message);
+            // You can update the UI here if needed
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Send a GET request when the page loads
+    window.addEventListener('load', async function() {
+        try {
+            const response = await fetch('http://localhost:8080/');
+            const data = await response.json();
+            console.log(data.products); // Log products to console
+            // You can update the UI here with the received products if needed
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
