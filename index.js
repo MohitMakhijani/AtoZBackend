@@ -98,6 +98,11 @@ server.get("/rooms", async (req, res) => {
     }
 });
 
+server.get('/', (req, res) => {
+    res.json({
+        message: "jnjsw",
+    })
+})
 server.post("/signup", async (req, res) => {
     try {
         const { email, name, password, phoneNo, Aadhar, profilePicture, Address } = req.body;
@@ -240,7 +245,7 @@ async function main() {
 
 main();
 
-server.listen(8080, () => {
+server.listen(process.env.PORT, () => {
     console.log('Server running on http://localhost:8080');
 });
 server.use('/', (req, res) => {
