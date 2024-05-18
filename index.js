@@ -3,12 +3,25 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
-const server = express();
 const cors = require('cors');
 const path = require('path');
+
+const server = express();
 server.use(express.json());
 server.use(cors());
 server.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware for error handling
+server.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: "Internal server error" });
+});
+
+// Logging middleware for debugging
+server.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 
 // User schema and model
 const userSchema = new mongoose.Schema({
@@ -23,7 +36,7 @@ const userSchema = new mongoose.Schema({
 
 const roomSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
-    price:{ type: String, required: true, unique: true },
+    price: { type: String, required: true, unique: true },
     Address: { type: String, required: true, unique: true },
     persons: { type: String, required: true, unique: true },
     Pictures: [{ type: String, required: true }], // Array of strings for pictures
@@ -42,7 +55,7 @@ const feedbacks = mongoose.model('feedbacks', feedbackSchema);
 
 server.post("/postRoom", async (req, res) => {
     try {
-        const { email, Address, persons, Pictures, Video, Description ,price} = req.body;
+        const { email, Address, persons, Pictures, Video, Description, price } = req.body;
 
         // Check if user exists
         const existingUser = await User.findOne({ email });
@@ -171,7 +184,7 @@ server.post('/postFeedback', async (req, res) => {
     }
 });
 
-server.get('/feedback',async (req,res)=>{
+server.get('/feedback', async (req, res) => {
     try {
         // Fetch all rooms from the database
         const feedback = await feedbacks.find();
@@ -229,4 +242,9 @@ main();
 
 server.listen(8080, () => {
     console.log('Server running on http://localhost:8080');
+});
+server.use('/', (req, res) => {
+    res.json({
+        message: "WELCOME"
+    });
 });
