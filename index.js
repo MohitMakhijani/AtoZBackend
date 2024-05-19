@@ -35,18 +35,18 @@ const userSchema = new mongoose.Schema({
 });
 
 const roomSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
-    price: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: false },
+    price: { type: String, required: true, unique: false },
     Address: { type: String, required: true, unique: true },
-    persons: { type: String, required: true, unique: true },
+    persons: { type: String, required: true, unique: false },
     Pictures: [{ type: String, required: true }], // Array of strings for pictures
-    Video: [{ type: String, required: true, unique: true }],
-    Description: { type: String, required: true, unique: true },
+    Video: [{ type: String, required: true, unique: false }],
+    Description: { type: String, required: true, unique: false },
 });
 
 const feedbackSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
-    feedBack: { type: String, required: true, unique: true }
+    email: { type: String, required: true,unique:false},
+    feedBack: { type: String, required: true,unique:false }
 });
 
 const Room = mongoose.model("Rooms", roomSchema);
@@ -84,11 +84,28 @@ server.post("/postRoom", async (req, res) => {
     }
 });
 
-// Get all rooms route
+// Get all rooms route with filtering
 server.get("/rooms", async (req, res) => {
     try {
-        // Fetch all rooms from the database
-        const rooms = await Room.find();
+        // Destructure query parameters
+        const { persons, address, price } = req.query;
+
+        // Create a filter object
+        let filter = {};
+
+        if (persons) {
+            filter.persons = persons;
+        }
+        if (address) {
+            // Use a case-insensitive regular expression to match the address
+            filter.Address = { $regex: address, $options: 'i' };
+        }
+        if (price) {
+            filter.price = price;
+        }
+
+        // Fetch filtered rooms from the database
+        const rooms = await Room.find(filter);
 
         // Send the list of rooms as a JSON response
         res.status(200).json(rooms);
@@ -100,7 +117,7 @@ server.get("/rooms", async (req, res) => {
 
 server.get('/', (req, res) => {
     res.json({
-        message: "jnjsw",
+        message: "Welcome !! Backend Developed by Mohit",
     })
 })
 server.post("/signup", async (req, res) => {
@@ -147,6 +164,13 @@ server.patch("/setup", async (req, res) => {
         if (!existingUser) {
             return res.status(400).json({ message: "User does not exist" });
         }
+        if (phoneNo) {
+            const phoneNoTaken = await User.findOne({ phoneNo });
+            if (phoneNoTaken && phoneNoTaken.email !== email) {
+                return res.status(400).json({ message: "Phone number already in use" });
+            }
+            existingUser.phoneNo = phoneNo;
+        }
 
         // Update user profile fields if they are provided
         if (phoneNo) {
@@ -175,6 +199,11 @@ server.patch("/setup", async (req, res) => {
 server.post('/postFeedback', async (req, res) => {
     try {
         const { email, feedBack } = req.body;
+
+        // Check if email and feedBack fields are provided
+        if (!email || !feedBack) {
+            return res.status(400).json({ message: "Email and feedback are required" });
+        }
 
         // Create new feedback
         const feedback = new feedbacks({ email, feedBack });
@@ -247,9 +276,4 @@ main();
 
 server.listen(process.env.PORT || 8080, () => {
     console.log(`Server running on http://localhost:${process.env.PORT || 3000}`);
-});
-server.use('/', (req, res) => {
-    res.json({
-        message: "WELCOME"
-    });
 });

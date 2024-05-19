@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .signup-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .signup-container h1 {
+            margin-bottom: 20px;
+        }
+        .signup-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .signup-container button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #28a745;
+            color: #fff;
+            font-size: 16px;
+        }
+        .signup-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Signup</h1>
+        <form id="signupForm">
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="text" id="name" name="name" placeholder="Name" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="text" id="phoneNo" name="phoneNo" placeholder="Phone Number" required>
+            <input type="text" id="aadhar" name="aadhar" placeholder="Aadhar Number" required>
+            <input type="text" id="profilePicture" name="profilePicture" placeholder="Profile Picture URL">
+            <input type="text" id="address" name="address" placeholder="Address" required>
+            <button type="submit">Signup</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+            const password = document.getElementById('password').value;
+            const phoneNo = document.getElementById('phoneNo').value;
+            const aadhar = document.getElementById('aadhar').value;
+            const profilePicture = document.getElementById('profilePicture').value;
+            const address = document.getElementById('address').value;
+
+            const response = await fetch('http://localhost:8080/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    name,
+                    password,
+                    phoneNo,
+                    Aadhar: aadhar,
+                    profilePicture,
+                    Address: address
+                })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Signup successful!');
+                // Redirect or clear the form
+            } else {
+                alert(`Signup failed: ${result.message}`);
+            }
+        });
+    </script>
+</body>
+</html>
